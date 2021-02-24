@@ -1,5 +1,6 @@
 import requests, sys
 from bs4 import BeautifulSoup
+from multiprocessing.pool import ThreadPool as Pool
 
 def getUrls(siteUrl):
 
@@ -25,12 +26,18 @@ def getUrls(siteUrl):
 if __name__ == '__main__':
     siteUrl = sys.argv[1]
     urls = []
+    
+    pool_size = 5
+    pool = Pool(pool_size)
 
     urls.append(siteUrl)
 
     i = 0
     while len(urls) != 0:
-        newurls = getUrls(urls[i])
+        newurls = pool.apple_async(getUrls, (urls[i], ))
         urls.extend(newurls)
         i += 1 
+
+    pool.close()
+    pool.join()
 
